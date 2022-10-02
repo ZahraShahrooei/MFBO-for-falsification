@@ -14,10 +14,21 @@ import gym
 !pip install gpy
 import GPy
 from stable_baselines3 import PPO
-import gym
 import numpy as np
 !pip install emukit
 import emukit
+import numpy as np
+from gym import spaces
+import numpy as np
+import GPy
+import copy
+from emukit.bayesian_optimization.acquisitions.entropy_search import EntropySearch
+from emukit.model_wrappers import GPyModelWrapper
+from emukit.core.optimization.multi_source_acquisition_optimizer import MultiSourceAcquisitionOptimizer
+from emukit.core.optimization import GradientAcquisitionOptimizer
+from sklearn.decomposition import KernelPCA
+from emukit.core.optimization.optimizer import Optimizer
+from emukit.core.optimization.optimizer import OptLbfgs
 # !pip uninstall scipy
 # !pip install scipy==1.4.1
 
@@ -37,8 +48,7 @@ pi, _ = modelppo.predict(ob, deterministic=True)
 
 #Trajectories
 # SUT
-import numpy as np
-from gym import spaces
+
 def compute_traj(max_steps, **kwargs):
     env.reset()
     if 'init_state' in kwargs:
@@ -71,7 +81,6 @@ def sut(max_steps,x0, ead=False):
                          force_mag=x0[6])
 
 ######## Utils ##############
-import numpy as np
 def sample_from(count, bounds, sampler=None):
     if sampler is None:
         sampler = lambda num: np.random.random(num)
@@ -101,11 +110,6 @@ bound = ParameterSpace([ContinuousParameter('x', -2,2),
            ContinuousParameter('mag', 0,10)])
 
 #Function tree ##
-import numpy as np
-import GPy
-import copy
-
-# Class Tree Node!
 class tree_node():
     def __init__(self, children, f=None, df=None):
         self.children = children
@@ -243,22 +247,6 @@ rand_num=[rand_nums6 ,rand_nums7,rand_nums8,rand_nums9 ,rand_nums10]
 ns_Failure_count=[]
 ns_details_r3 = []
 num_nonsmooth=[]
-
-'''
-This file defines the testing module. This needs the following:
-1. The system under test
-2. The specification or the function which we are trying to minimize
-3. Domains of the uncertainities
-'''
-from emukit.bayesian_optimization.acquisitions.entropy_search import EntropySearch
-from emukit.model_wrappers import GPyModelWrapper
-from emukit.core.optimization.multi_source_acquisition_optimizer import MultiSourceAcquisitionOptimizer
-from emukit.core.optimization import GradientAcquisitionOptimizer
-from sklearn.decomposition import KernelPCA
-from emukit.core.optimization.optimizer import Optimizer
-from emukit.core.optimization.optimizer import OptLbfgs
-import copy
-
 class test_module:
     def __init__(self, sut, bounds, spec=None,f_tree=None,optimizer=None,
                  normalizer=False,seed=None, **kwargs):
@@ -408,9 +396,6 @@ class test_module:
           print(num_ce)
 
 # Safety specification in paper:
-# 1. Either the car remains within the initial condition of state and velocity
-# 2. Reaches the goal asap
-from emukit.core.optimization import GradientAcquisitionOptimizer
 nums=[]
 num_ce_real=[]
 import warnings
